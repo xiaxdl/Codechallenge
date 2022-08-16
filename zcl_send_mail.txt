@@ -1,0 +1,153 @@
+CLASS zcl_send_mail DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS is_valid_address
+      IMPORTING
+        !iv_address      TYPE string
+      RETURNING
+        VALUE(ev_result) TYPE abap_bool .
+    METHODS send_mail
+      IMPORTING
+        !iv_to           TYPE string
+        !iv_subject      TYPE string
+        !iv_content      TYPE string
+      RETURNING
+        VALUE(ev_result) TYPE abap_bool .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS ZCL_SEND_MAIL IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_SEND_MAIL->IS_VALID_ADDRESS
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_ADDRESS                     TYPE        STRING
+* | [<-()] EV_RESULT                      TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD is_valid_address.
+*************************************************************************
+* is_valid_address
+*------------------------------------------------------------------------
+* This method validates an email address
+*************************************************************************
+
+    DATA lo_matcher         TYPE REF TO cl_abap_matcher.
+    DATA lv_pattern_addr    TYPE string VALUE '[0-9a-zA-Z]+([-+.][0-9a-zA-Z]+)*@[0-9a-zA-Z]+([-.][0-9a-zA-Z]+)*\.[0-9a-zA-Z]{3,4}'.
+
+    "1 If the input address is empty, return false
+    IF iv_address IS INITIAL.
+      ev_result = abap_false.
+      RETURN.
+    ENDIF.
+    TRY.
+        "2 Match address with pattern
+        lo_matcher = cl_abap_matcher=>create( pattern = lv_pattern_addr
+                                              text    = iv_address ).
+        ev_result = lo_matcher->match( ).
+      CATCH cx_root .
+        ev_result = abap_false.
+    ENDTRY.
+
+
+  ENDMETHOD.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_SEND_MAIL->SEND_MAIL
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_TO                          TYPE        STRING
+* | [--->] IV_SUBJECT                     TYPE        STRING
+* | [--->] IV_CONTENT                     TYPE        STRING
+* | [<-()] EV_RESULT                      TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD send_mail.
+*************************************************************************
+* send_mail
+*------------------------------------------------------------------------
+* This method sends a simple email and returns whether the email was sent
+*************************************************************************
+
+    DATA lv_result        TYPE abap_bool.
+    "1 Check receiver address is valid
+    lv_result = is_valid_address( iv_to ).
+    IF lv_result = abap_false.
+      ev_result = abap_false.
+      RETURN.
+    ENDIF.
+
+    "2 Check Subject or Content can not be empty
+    IF iv_subject IS INITIAL OR iv_content IS INITIAL.
+      ev_result = abap_false.
+      RETURN.
+    ENDIF.
+
+    DATA lt_main_text    TYPE bcsy_text.
+    DATA ls_main_text    TYPE soli.
+    DATA lv_receiver     TYPE ad_smtpadr.
+    DATA lv_subject      TYPE so_obj_des.
+    DATA lo_send_request TYPE REF TO cl_bcs.
+    DATA lo_recipient    TYPE REF TO if_recipient_bcs.
+    DATA lo_document     TYPE REF TO cl_document_bcs.
+    DATA lv_content      TYPE string.
+    DATA lv_length       TYPE i.
+
+    "3 Convert the content to local table
+    "  If the length of input content less or equal 250, append directly,
+    "  Else use the loop to confirm all of the content had been append into local table
+    "  and each line less or equal 250
+    lv_content = iv_content.
+    lv_length = strlen( lv_content ).
+    IF lv_length LE 250.
+      CLEAR: ls_main_text.
+      ls_main_text-line = iv_content.
+      APPEND ls_main_text TO lt_main_text.
+    ELSE.
+      DO.
+        CLEAR: ls_main_text.
+        IF lv_length LE 250.
+          CLEAR: ls_main_text.
+          ls_main_text-line = lv_content+0(lv_length).
+          APPEND ls_main_text TO lt_main_text.
+          EXIT.
+        ELSE.
+          CLEAR: ls_main_text.
+          ls_main_text-line = lv_content+0(250).
+          APPEND ls_main_text TO lt_main_text.
+        ENDIF.
+        lv_length = lv_length - 250.
+        lv_content = lv_content+250(lv_length).
+      ENDDO.
+    ENDIF.
+
+    "4 Convert receiver and subject
+    lv_receiver = iv_to.
+    lv_subject  = iv_subject.
+
+    "5 Send Email
+    TRY.
+        lo_send_request = cl_bcs=>create_persistent( ).   "Create email object
+        lo_document = cl_document_bcs=>create_document(   "Set Content
+                         i_type    = 'RAW'
+                         i_text    = lt_main_text
+                         i_subject = lv_subject ).
+        lo_send_request->set_document( lo_document ).     "Add Content
+        lo_recipient = cl_cam_address_bcs=>create_internet_address( lv_receiver ).  "Set recipient
+        lo_send_request->add_recipient( lo_recipient ).   "Add receiver
+        lo_send_request->set_send_immediately( 'X' ).     "Set flag for in time
+        ev_result = lo_send_request->send( i_with_error_screen = 'X' ). "Send Email
+        COMMIT WORK AND WAIT.
+      CATCH cx_root.
+        ev_result = abap_false.
+        RETURN.
+    ENDTRY.
+
+  ENDMETHOD.
+ENDCLASS.

@@ -1,0 +1,85 @@
+CLASS zcl_balance_brackets DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS is_balanced
+      IMPORTING
+        !iv_brackets     TYPE string
+      RETURNING
+        VALUE(ev_result) TYPE abap_bool .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS ZCL_BALANCE_BRACKETS IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_BALANCE_BRACKETS->IS_BALANCED
+* +-------------------------------------------------------------------------------------------------+
+* | [--->] IV_BRACKETS                    TYPE        STRING
+* | [<-()] EV_RESULT                      TYPE        ABAP_BOOL
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD is_balanced.
+***********************************************************************
+* is_balanced
+*-----------------------------------------------------------------------
+* This method validates a set of brackets
+************************************************************************
+
+    DATA lo_matcher                 TYPE REF TO cl_abap_matcher.
+    DATA lv_parttern_not_brackets   TYPE string VALUE '[^({\[\]})]'.
+    DATA lv_parttern_brackets_team  TYPE string VALUE '\{\}|\(\)|\[\]'.
+    DATA lv_space                   TYPE c VALUE ''.
+    DATA lv_result_string           TYPE string.
+    DATA lv_counter                 TYPE i.
+
+    TRY.
+        "1 If the input string is empty, return true
+        IF iv_brackets IS INITIAL.
+          ev_result = abap_true.
+          RETURN.
+        ENDIF.
+
+        "2 Replace the characters which is not the brackets with space
+        lo_matcher = cl_abap_matcher=>create( pattern = lv_parttern_not_brackets
+                                              text    = iv_brackets ).
+        lo_matcher->replace_all( newtext = lv_space ).
+        lv_result_string = lo_matcher->text.
+
+        "3 If the result string is empty, return true.
+        IF lv_result_string IS INITIAL.
+          ev_result = abap_true.
+          RETURN.
+        ENDIF.
+
+        "4 Replace all brackets team with space by the loop for the result string at step 2
+        DO .
+          CLEAR: lo_matcher.
+          lo_matcher = cl_abap_matcher=>create( pattern = lv_parttern_brackets_team
+                                                text    = lv_result_string ).
+          lv_counter = lo_matcher->replace_all( newtext = lv_space ).
+          "If no any brackets team had been replaced, exit the loop
+          IF lv_counter = 0 OR lv_counter IS INITIAL.
+            EXIT.
+          ENDIF.
+          lv_result_string = lo_matcher->text.
+        ENDDO.
+
+        "5 If the result string is empty of step 4, return true, else return false.
+        IF lv_result_string IS INITIAL.
+          ev_result = abap_true.
+        ELSE.
+          ev_result = abap_false.
+        ENDIF.
+      CATCH cx_root .
+        ev_result = abap_false.
+    ENDTRY.
+
+  ENDMETHOD.
+ENDCLASS.

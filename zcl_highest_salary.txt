@@ -1,0 +1,72 @@
+CLASS zcl_highest_salary DEFINITION
+PUBLIC
+FINAL
+CREATE PUBLIC.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_result,
+             department TYPE char50,
+             employee   TYPE char50,
+             salary     TYPE i,
+           END OF ty_result.
+    TYPES: tt_result TYPE TABLE OF ty_result.
+    METHODS: highest_salary CHANGING t_result TYPE tt_result.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS ZCL_HIGHEST_SALARY IMPLEMENTATION.
+
+
+* <SIGNATURE>---------------------------------------------------------------------------------------+
+* | Instance Public Method ZCL_HIGHEST_SALARY->HIGHEST_SALARY
+* +-------------------------------------------------------------------------------------------------+
+* | [<-->] T_RESULT                       TYPE        TT_RESULT
+* +--------------------------------------------------------------------------------------</SIGNATURE>
+  METHOD highest_salary.
+************************************************************************
+* highest_salary
+*-----------------------------------------------------------------------
+* This method returns a table containing the employees with the
+* highest salary by department
+************************************************************************
+    REFRESH t_result.
+
+    TYPES: BEGIN OF ty_highest_salary,
+             departmentid TYPE zta_employee-departmentid,
+             salary       TYPE zta_employee-salary,
+           END OF ty_highest_salary.
+
+    DATA: lt_department_highest_salary   TYPE TABLE OF ty_highest_salary,
+          lt_department_highest_salary_t TYPE TABLE OF ty_highest_salary.
+
+    "1 Get the department id with highest salary
+    SELECT departmentid MAX( salary ) AS salary
+      FROM zta_employee
+      INTO TABLE lt_department_highest_salary
+      GROUP BY departmentid.
+    CHECK sy-subrc EQ 0.
+
+    lt_department_highest_salary_t = lt_department_highest_salary.
+    SORT lt_department_highest_salary_t BY departmentid.
+    DELETE ADJACENT DUPLICATES FROM lt_department_highest_salary_t COMPARING departmentid.
+
+    " 2 Get the department highest salary with employee name
+    IF lt_department_highest_salary_t IS NOT INITIAL.
+      SELECT b~name AS department
+             a~name AS employee
+             a~salary AS salary
+         FROM zta_employee AS a
+         JOIN zta_department AS b ON a~departmentid = b~id
+         INTO TABLE t_result
+          FOR ALL ENTRIES IN lt_department_highest_salary_t
+       WHERE a~departmentid = lt_department_highest_salary_t-departmentid
+         AND a~salary = lt_department_highest_salary_t-salary.
+      IF sy-subrc EQ 0.
+        SORT t_result BY department.  "Sort result list by department name
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+ENDCLASS.

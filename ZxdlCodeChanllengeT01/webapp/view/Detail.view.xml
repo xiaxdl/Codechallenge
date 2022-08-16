@@ -1,0 +1,75 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:cust="sap.customer.codeChanllenge.t01.control"
+	xmlns:l="sap.ui.layout" controllerName="sap.customer.codeChanllenge.t01.controller.Detail" xmlns:html="http://www.w3.org/1999/xhtml">
+	<!--<l:Splitter height="100%" width="100%" orientation="Vertical">-->
+	<!--	<l:Splitter  orientation="Vertical">-->
+	<!--		<l:layoutData>-->
+	<!--			<l:SplitterLayoutData size="100px"/>-->
+	<!--		</l:layoutData>-->
+	<!--		<l:contentAreas>-->
+	<!--			<Image src="{chats>photo}" class="chatPhotoHead sapUiTinyMarginBeginEnd sapUiTinyMarginTopBottom"/>-->
+	<!--<VBox>-->
+	<!--				<Text text="{chats>contactName}" class="sapUiTinyMarginTopBottom"/>-->
+	<!--				<Text text="Achive 1h ago"/>-->
+	<!--</VBox>-->
+	<!--		</l:contentAreas>-->
+	<!--	</l:Splitter>-->
+	<!--	<l:Splitter height="auto">-->
+	<!--		<cust:CustomChatList items="{chatHisList>/}">-->
+	<!--			<cust:items>-->
+	<!--				<cust:CustomChatListItem type="{chatHisList>type}" src="{chatHisList>photo}" text="{chatHisList>text}"/>-->
+	<!--			</cust:items>-->
+	<!--		</cust:CustomChatList>-->
+	<!--	</l:Splitter>-->
+	<!--	<l:Splitter height="50px">-->
+	<!--		<Input width="90%"/>-->
+	<!--	</l:Splitter>-->
+	<!--</l:Splitter>-->
+	<Panel >
+		<HBox>
+			<Image src="{chats>photo}" class="chatPhotoHead sapUiTinyMarginBeginEnd sapUiTinyMarginTopBottom"/>
+			<VBox>
+				<Text text="{chats>contactName}" class="sapUiTinyMarginTopBottom"/>
+				<Text text="Achive 1h ago"/>
+			</VBox>
+		</HBox>
+	</Panel>
+	<Panel height="70%" id="chatHisContent">
+		<ScrollContainer id="oScroll" width="100%" height="100%"  vertical="true" focusable="true">
+			<cust:CustomChatList id="cChatHis" items="{chatHisList>/}">
+				<cust:items>
+					<cust:CustomChatListItem type="{chatHisList>type}" src="{chatHisList>photo}" text="{chatHisList>text}"/>
+				</cust:items>
+			</cust:CustomChatList>
+		</ScrollContainer>
+	</Panel>
+	<Panel>
+		<Input id="sendMsgInput" width="90%" submit=".onSubmitMsg"/>
+	</Panel>
+	<!--<VBox>-->
+	<!--	<HBox>-->
+	<!--		<Image src="{chats>photo}" class="chatPhotoHead sapUiTinyMarginBeginEnd sapUiTinyMarginTopBottom"/>-->
+	<!--		<VBox>-->
+	<!--			<Text text="{chats>contactName}" class="sapUiTinyMarginTopBottom"/>-->
+	<!--			<Text text="Achive 1h ago"/>-->
+	<!--		</VBox>-->
+	<!--	</HBox>-->
+	<!--<VBox id="chatContent" height="80%" width="90%">-->
+	<!--	<ScrollContainer height="80%"-->
+	<!--	vertical="true"-->
+	<!--	focusable="true">-->
+	<!--		<cust:CustomChatList items="{chatHisList>/}">-->
+	<!--			<cust:items>-->
+	<!--				<cust:CustomChatListItem type="{chatHisList>type}" src="{chatHisList>photo}" text="{chatHisList>text}"/>-->
+	<!--			</cust:items>-->
+	<!--		</cust:CustomChatList>-->
+	<!--	</ScrollContainer>-->
+	<!--<HBox>-->
+	<!--	<Image src="{chats>photo}" class="chatPhotoHead sapUiTinyMarginBeginEnd sapUiTinyMarginTopBottom"/>-->
+	<!--	<Text text="{chats>contactName}" class="sapUiTinyMarginTopBottom"/>-->
+	<!--</HBox>-->
+	<!--	</VBox>-->
+	<!--	<VBox>-->
+	<!--		<Input width="90%"/>-->
+	<!--	</VBox>-->
+	<!--</VBox>-->
+</mvc:View>

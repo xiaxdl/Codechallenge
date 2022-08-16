@@ -1,0 +1,25 @@
+<mvc:View controllerName="sap.customer.codeChanllenge.t01.controller.App" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m" xmlns:f="sap.f">
+	<App>
+		<pages>
+			<Page title="{i18n>title}">
+				<customHeader>
+					<Bar>
+						<contentLeft>
+							<Image src="images/logo-min.png" class="sapUiSmallMarginBegin" />
+						</contentLeft>
+						<contentMiddle>
+							<Text text="Team Chat"/>
+						</contentMiddle>
+						<contentRight>
+							<Text text="Version 1.0" class="sapUiSmallMarginEnd" />
+						</contentRight>
+					</Bar>
+				</customHeader>
+				<content>
+					<f:FlexibleColumnLayout id="flexibleColumnLayout" stateChange=".onStateChanged" backgroundDesign="Solid" layout="{/layout}"/>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

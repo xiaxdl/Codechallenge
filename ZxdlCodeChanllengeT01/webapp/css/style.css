@@ -1,0 +1,39 @@
+/* Enter your custom styles here */
+.chatPhotoHead {
+	border-radius: 50%;
+	height: 60px;
+	width: 60px;
+}
+.sapMSLIWrapping>.sapMLIBContent>.sapMSLIImg{
+	border-radius: 50%;
+}
+/*.customlist {*/
+/*  width: 500px;*/
+/*  height: auto;*/
+/*  margin: 0 auto;*/
+/*  overflow: auto;*/
+/*}*/
+
+/*.customlist ul {*/
+/*  list-style-type: none;*/
+/*}*/
+/*.customlist div{*/
+/*	text-align: center;*/
+/*}*/
+.customlist img {
+  float: left;
+  margin: 10px;
+  /*border: 5px solid #fff;*/
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.customlist span {
+	word-break: normal;
+	width: auto;
+	display: block;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow: hidden;
+	text-align: left;
+}
