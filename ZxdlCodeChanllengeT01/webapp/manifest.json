@@ -14,7 +14,6 @@
 			"version": "1.40.12"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -33,10 +32,8 @@
 		"supportedThemes": [
 			"sap_hcb",
 			"sap_belize"
-
 		]
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.customer.codeChanllenge.t01.view.App",
@@ -45,20 +42,20 @@
 		"dependencies": {
 			"minUI5Version": "1.30.0",
 			"libs": {
-				"sap.ui.core": {},
+				"sap.collaboration": {},
+				"sap.f": {},
 				"sap.m": {},
+				"sap.ui.comp": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {},
 				"sap.ushell": {},
-				"sap.collaboration": {},
-				"sap.ui.comp": {},
-				"sap.uxap": {},
-				"sap.f": {}
+				"sap.uxap": {}
 			}
 		},
 		"config": {
 			"fullWidth": true
 		},
-		"routing":{
+		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
 				"type": "View",
@@ -110,9 +107,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		}
 	}
 }

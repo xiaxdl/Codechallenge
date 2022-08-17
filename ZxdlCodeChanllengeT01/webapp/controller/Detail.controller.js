@@ -43,7 +43,7 @@ sap.ui.define([
 			var historyData = this.getView().getModel("historyList").getData().filter(oHistory => oHistory.phone == oChatPerson.phone);
 			for (var i = 0; i < historyData.length; i++) {
 				if (historyData[i].type === 'S') {
-					historyData[i].photo = "images/logo.png";
+					historyData[i].photo = "images/logo.png";		//Default sender photo
 				} else {
 					historyData[i].photo = oChatPerson.photo;
 				}
@@ -59,9 +59,8 @@ sap.ui.define([
 			var oItem = oList.getItems()[maxLength];
 			var oScroll = this.getView().byId("oScroll");
 			var that = this;
-			oScroll.scrollTo(0, oScroll.$().height());
 			jQuery.sap.delayedCall(100, that, function() {
-				oScroll.scrollTo(0, oScroll.$().height());
+				oScroll.scrollTo(0, document.querySelector(".customlist").clientHeight);
 			})
 		},
 		/**
@@ -85,23 +84,23 @@ sap.ui.define([
 				type: ""
 			};
 			oHisRecord.phone = this.getView().getModel("chats").getData()[this._sIndex].phone;;
-			oHisRecord.id = "232423";
-			oHisRecord.photo = "images/logo.png";
-			oHisRecord.date = "";
-			oHisRecord.text = oEvent.getParameters().value;
-			oHisRecord.sent = true;
-			oHisRecord.read = false;
-			oHisRecord.delivered = true;
-			oHisRecord.type = "S";
-			this.getView().getModel("historyList").getData().push(oHisRecord);
-			this.getView().getModel("chatHisList").getData().push(oHisRecord);
+			oHisRecord.id = "232423";	//Default sender new message's ID
+			oHisRecord.photo = "images/logo.png";	//Default sender photo
+			oHisRecord.date = "";					//Sent date
+			oHisRecord.text = oEvent.getParameters().value;	//Sent message
+			oHisRecord.sent = true;					//Default status of sent message
+			oHisRecord.read = false;				//Default status of sent message whether had been read
+			oHisRecord.delivered = true;			//Default status of sent message whether had been delivered
+			oHisRecord.type = "S";					//Message type
+			this.getView().getModel("historyList").getData().push(oHisRecord);	//Push message to history list
+			this.getView().getModel("chatHisList").getData().push(oHisRecord);	//Push message to current chat object history list
 
-			this.getView().getModel("chats").getData()[this._sIndex].recentMsg = oEvent.getParameters().value;
-			sap.ui.getCore().byId("__xmlview1").oController.refreshChatList();
+			this.getView().getModel("chats").getData()[this._sIndex].recentMsg = oEvent.getParameters().value; 
+			sap.ui.getCore().byId("__xmlview1").oController.refreshChatList(); //Update recent message to left chat list
 			// sap.ui.getCore().byId("__xmlview1").byId("chatList").getBinding("items").refresh(true);
-			this.getView().byId("cChatHis").getBinding("items").refresh(true);
-			this.getView().byId("sendMsgInput").setValue("");
-			this._scrollToBottom();
+			this.getView().byId("cChatHis").getBinding("items").refresh(true); //Update current chat history list
+			this.getView().byId("sendMsgInput").setValue("");				   //Clear sent message
+			this._scrollToBottom();											   //Scroll to botom when needed
 		}
 
 	});

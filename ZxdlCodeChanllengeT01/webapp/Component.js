@@ -47,19 +47,21 @@ sap.ui.define([
 
 			var oHisRecords = [];
 			var oChatList = [];
-
+			//Get chatSet from json file
 			var oChatModel = new JSONModel();
 			oChatModel.loadData("mockData/chatsSet.json", "", false);
 			var oChatData = oChatModel.getData();
 
+			//Get receive messages Set from json file
 			var oReceiveMsgModel = new JSONModel();
 			oReceiveMsgModel.loadData("mockData/ReceivedMessagesSet.json", "", false);
 			var oReceivedMsgData = oReceiveMsgModel.getData();
 
+			//Get sent messages Set from json file
 			var oSentMsgModel = new JSONModel();
 			oSentMsgModel.loadData("mockData/SentMessagesSet.json", "", false);
 			var oSentMsgData = oSentMsgModel.getData();
-
+			//Push receive message and sent message into History records array
 			oReceivedMsgData.forEach(function(cReceiveMsg) {
 				var oHisRecord = {
 					phone: "",
@@ -109,37 +111,13 @@ sap.ui.define([
 					return 1;
 				}
 			});
-			//Sort by Date ascending
-			// oHisRecords.sort(function(a, b) {
-			// 	if (a.phone == b.phone) {
-			// 		var startDate = Date.parse(new Date(Date.UTC(a.date.split("T")[0].split("/")[2], a.date.split("T")[0].split("/")[1], a.date.split(
-			// 			"T")[0].split("/")[0], a.date.split("T")[1].split(":")[0] - 8, a.date.split("T")[1].split(":")[1])));
-			// 		var endDate = Date.parse(new Date(Date.UTC(b.date.split("T")[0].split("/")[2], b.date.split("T")[0].split("/")[1], b.date.split(
-			// 			"T")[0].split("/")[0], b.date.split("T")[1].split(":")[0] - 8, b.date.split("T")[1].split(":")[1])));
-			// 		// var dateFormat = DateFormat.getDateInstance({
-			// 		// 	pattern: "dd/MM/yyyy HH:ss"
-			// 		// });
-			// 		// var dateformat = dateFormat.parse(a.date);
-			// 		// var date1 = dateFormat.format(dateformat);
-			// 		if (startDate <= endDate) {
-			// 			return -1;
-			// 		} else {
-			// 			return 1;
-			// 		}
-			// 	}
-			// });
-			//Sort by Date descending
+			//Sort History records array by Date descending
 			oHisRecords.sort(function(a, b) {
 				if (a.phone == b.phone) {
 					var startDate = Date.parse(new Date(Date.UTC(a.date.split("T")[0].split("/")[2], a.date.split("T")[0].split("/")[1], a.date.split(
 						"T")[0].split("/")[0], a.date.split("T")[1].split(":")[0] - 8, a.date.split("T")[1].split(":")[1])));
 					var endDate = Date.parse(new Date(Date.UTC(b.date.split("T")[0].split("/")[2], b.date.split("T")[0].split("/")[1], b.date.split(
 						"T")[0].split("/")[0], b.date.split("T")[1].split(":")[0] - 8, b.date.split("T")[1].split(":")[1])));
-					// var dateFormat = DateFormat.getDateInstance({
-					// 	pattern: "dd/MM/yyyy HH:ss"
-					// });
-					// var dateformat = dateFormat.parse(a.date);
-					// var date1 = dateFormat.format(dateformat);
 					if (startDate <= endDate) {
 						return 1;
 					} else {
@@ -147,6 +125,7 @@ sap.ui.define([
 					}
 				}
 			});
+			//Get recent message to chat list
 			for (var i = 0; i < oChatData.length; i++) {
 				var currentReceiveMsgData = oReceivedMsgData.filter(oReceivedMsg => oReceivedMsg.phone == oChatData[i].phone);
 				var currentSentMsgData = oSentMsgData.filter(oSentMsg => oSentMsg.phone == oChatData[i].phone);
@@ -171,13 +150,13 @@ sap.ui.define([
 				}
 				oChatList.push(oChat);
 			}
-
+			//Set Chat Model
 			var oChatModel = new JSONModel(oChatList);
 			this.setModel(oChatModel, "chats");
-
+			//Set history List model
 			var oHisMsgModel = new JSONModel(oHisRecords);
 			this.setModel(oHisMsgModel, "historyList");
-
+			//Set default Module
 			var oModel = new JSONModel();
 			this.setModel(oModel);
 		}
